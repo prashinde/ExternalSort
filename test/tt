@@ -1,0 +1,1 @@
+gnuplot -e "set title 'Scalability-Response Time Vs. Rate';set xlabel'Time between two requests(ms)'; set ylabel'Response Time(ms)';plot 'plot' w linespoint, '' with labels; pause -1"

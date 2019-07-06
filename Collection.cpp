@@ -44,7 +44,7 @@ void Collection::KWayMerge()
         streams[i].open("/tmp/part-"+std::to_string(i));
         KeyValue kvp;
         if(getNext(streams[i], kvp) != -1) {
-            std::cout << "Pushing into pq" << std::endl;
+            std::cout << "Putting in priority queue:" << kvp.getKey() << " " << kvp.getValue() << std::endl;
             pq.push({kvp, i});
         }
     }
@@ -56,14 +56,39 @@ void Collection::KWayMerge()
     while(!pq.empty()) {
         auto pkv = pq.top();
         pq.pop();
-        std::cout << pkv.first.getKey() << " " << pkv.second << std::endl;
-        ofs << pkv.first.getKey() << " " << pkv.first.getValue() << std::endl;
-        if(getNext(streams[pkv.second], pkv.first) != -1)
-            pq.push(pkv); 
+
+        std::pair<KeyValue, int> next_pkv = pkv;
+        if(getNext(streams[next_pkv.second], next_pkv.first) != -1)
+            pq.push(next_pkv);
+
+        if(!pq.empty())
+            next_pkv = pq.top();
+        if(!pq.empty() and next_pkv.first.getKey() == pkv.first.getKey()) {
+            std::vector<std::string> values;
+            const auto key = pkv.first.getKey();
+            values.push_back(pkv.first.getValue());
+            while(!pq.empty()) {
+                auto ckvp = pq.top();
+                if(ckvp.first.getKey() != key)
+                    break;
+                values.push_back(ckvp.first.getValue());
+                if(getNext(streams[ckvp.second], ckvp.first) != -1)
+                    pq.push(ckvp);
+                pq.pop();
+            }
+            std::sort(values.begin(), values.end());
+            ofs << key;
+            for(auto value:values) {
+                ofs << " " << value;
+            }
+            ofs << std::endl;
+        } else {
+            ofs << pkv.first.getKey() << " " << pkv.first.getValue() << std::endl;
+        }
     }
 
-    for(int i = 0; i < partnum; i++)
-       remove(("/tmp/part-"+std::to_string(i)).c_str());
+    //for(int i = 0; i < partnum; i++)
+      // remove(("/tmp/part-"+std::to_string(i)).c_str());
 
     ofs.close();
 }

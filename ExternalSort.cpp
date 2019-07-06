@@ -17,15 +17,12 @@ void ExternalSort::sort(std::istream& input, std::ostream& output) {
             //std::cout << key << " " << value << std::endl;
             int res = collections.insert(key, value);
             if(res != 0) {
-                std::cout << "Reached Memory limit" << std::endl;
                 collections.sort();
-                collections.print();
                 collections.write();
                 collections.insert(key, value);
             }
         } else {
             collections.sort();
-            collections.print();
             collections.write();
             break;
         }

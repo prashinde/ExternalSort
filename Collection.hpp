@@ -9,7 +9,7 @@
 class Comp {
 public:
     bool operator()(std::pair<KeyValue, int> &first, std::pair<KeyValue, int> &second) {
-        return second.first < first.first;
+            return second.first < first.first;
     }
 };
 

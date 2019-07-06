@@ -29,9 +29,11 @@ public:
         return size;
     }
 
-    bool operator < (const KeyValue& toComp) const
+    bool operator < (KeyValue& toComp) const
     {
-        return (key < toComp.key);
+        if(key == toComp.getKey())
+            return (value < toComp.getValue());
+        return key < toComp.getKey();
     }
 
     KeyValue() {
